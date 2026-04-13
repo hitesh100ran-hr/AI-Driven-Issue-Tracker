@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+  <header class="app-header">
+    <div class="header-container">
+      <h1>Issue Tracker</h1>
+      <button id="add-issue-btn" class="btn primary-btn">+ New Issue</button>
+    </div>
+  </header>
+
+  <main class="board-container">
+    
+    <!-- To Do Column -->
+    <div class="column" data-status="todo">
+      <div class="column-header">
+        <h2>To Do</h2>
+        <span class="issue-count" id="count-todo">0</span>
+      </div>
+      <div class="column-body" id="list-todo">
+        <!-- Issues will be injected here by JS -->
+      </div>
+    </div>
+
+    <!-- In Progress Column -->
+    <div class="column" data-status="in-progress">
+      <div class="column-header">
+        <h2>In Progress</h2>
+        <span class="issue-count" id="count-in-progress">0</span>
+      </div>
+      <div class="column-body" id="list-in-progress">
+        <!-- Issues will be injected here by JS -->
+      </div>
+    </div>
+
+    <!-- Completed Column -->
+    <div class="column" data-status="completed">
+      <div class="column-header">
+        <h2>Completed</h2>
+        <span class="issue-count" id="count-completed">0</span>
+      </div>
+      <div class="column-body" id="list-completed">
+        <!-- Issues will be injected here by JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal for Adding Issues -->
+  <div id="issue-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <header class="modal-header">
+        <h2>Create New Issue</h2>
+        <button id="close-modal-btn" class="icon-btn">&times;</button>
+      </header>
+      <form id="issue-form">
+        <div class="form-group">
+          <label for="issue-title">Title</label>
+          <input type="text" id="issue-title" name="title" required placeholder="e.g. Implement user authentication" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="issue-desc">Description</label>
+          <textarea id="issue-desc" name="description" rows="4" placeholder="Add detailed context..." required></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="cancel-issue-btn" class="btn secondary-btn">Cancel</button>
+          <button type="submit" class="btn primary-btn">Create Issue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
