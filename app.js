@@ -73,11 +73,11 @@ const ThemeManager = {
 
   applyTheme() {
     if (this.themeBase === 'light') {
-      document.body.classList.add('light-theme');
+      document.documentElement.classList.add('light-theme');
       this.sunIcon.classList.add('hidden');
       this.moonIcon.classList.remove('hidden');
     } else {
-      document.body.classList.remove('light-theme');
+      document.documentElement.classList.remove('light-theme');
       this.sunIcon.classList.remove('hidden');
       this.moonIcon.classList.add('hidden');
     }

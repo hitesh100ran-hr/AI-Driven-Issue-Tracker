@@ -19,7 +19,7 @@
   --radius-lg: 12px;
 }
 
-body.light-theme {
+:root.light-theme {
   --bg-color: #f8fafc;           /* Slate 50 */
   --surface-color: #ffffff;      /* White */
   --surface-hover: #f1f5f9;      /* Slate 100 */
@@ -28,10 +28,10 @@ body.light-theme {
   --border-color: #e2e8f0;       /* Slate 200 */
 }
 
-body.light-theme .column {
+:root.light-theme .column {
   background-color: #f1f5f9;
 }
-body.light-theme .issue-id {
+:root.light-theme .issue-id {
   background: #e2e8f0;
 }
 
