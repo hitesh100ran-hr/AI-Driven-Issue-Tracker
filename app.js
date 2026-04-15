@@ -3,6 +3,124 @@
  * Vanilla JS, no dependencies.
  */
 
+// --- AI MANAGEMENT ---
+const AIManager = {
+  getApiKey() {
+    let key = localStorage.getItem('gemini_api_key');
+    if (!key) {
+      key = window.prompt("Gemini AI integration requires an API Key.\n\nPlease enter your API Key (it will be saved locally in your browser):");
+      if (key) {
+        localStorage.setItem('gemini_api_key', key);
+      }
+    }
+    return key;
+  },
+
+  async generateDescription(title) {
+    const key = this.getApiKey();
+    if (!key) return null;
+
+    try {
+      const module = await import("https://esm.run/@google/generative-ai");
+      const GoogleGenerativeAI = module.GoogleGenerativeAI;
+      
+      const genAI = new GoogleGenerativeAI(key);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      
+      const prompt = `You are an expert product manager assistant. Based on the issue title: "${title}", write a very brief but professional issue description. Include a short context, and a markdown checklist of 3-4 acceptance criteria. Keep it concise.`;
+      
+      const result = await model.generateContent(prompt);
+      return result.response.text();
+    } catch (e) {
+      console.error(e);
+      alert("AI Generation failed. Please check if your API key is valid or try again.");
+      if (e.message && e.message.includes('API key not valid')) {
+        localStorage.removeItem('gemini_api_key');
+      }
+      return null;
+    }
+  }
+};
+
+// --- THEME MANAGEMENT ---
+const ThemeManager = {
+  themeBase: 'dark',
+  STORAGE_KEY: 'antigravity_issue_tracker_theme',
+
+  init() {
+    this.btn = document.getElementById('theme-toggle-btn');
+    if (!this.btn) return;
+    this.sunIcon = this.btn.querySelector('.sun-icon');
+    this.moonIcon = this.btn.querySelector('.moon-icon');
+    
+    // Load from storage
+    const savedTheme = localStorage.getItem(this.STORAGE_KEY);
+    if (savedTheme) {
+      this.themeBase = savedTheme;
+    }
+    
+    this.applyTheme();
+    this.bindEvents();
+  },
+
+  bindEvents() {
+    this.btn.addEventListener('click', () => {
+      this.themeBase = this.themeBase === 'dark' ? 'light' : 'dark';
+      this.applyTheme();
+      localStorage.setItem(this.STORAGE_KEY, this.themeBase);
+    });
+  },
+
+  applyTheme() {
+    if (this.themeBase === 'light') {
+      document.body.classList.add('light-theme');
+      this.sunIcon.classList.add('hidden');
+      this.moonIcon.classList.remove('hidden');
+    } else {
+      document.body.classList.remove('light-theme');
+      this.sunIcon.classList.remove('hidden');
+      this.moonIcon.classList.add('hidden');
+    }
+  }
+};
+
+// --- PROFILE MANAGEMENT ---
+const ProfileManager = {
+  init() {
+    this.btn = document.getElementById('profile-btn');
+    if (!this.btn) return;
+    
+    // Load from storage
+    const savedName = localStorage.getItem('issue_tracker_profile_name') || 'Guest User';
+    this.updateAvatar(savedName);
+    
+    this.btn.addEventListener('click', () => {
+      const currentName = localStorage.getItem('issue_tracker_profile_name') || 'Guest User';
+      const promptText = "Settings:\n\n1. Enter your new Profile Name below.\n2. Or type 'reset key' to clear your Gemini API Key.";
+      const input = window.prompt(promptText, currentName);
+      
+      if (input !== null) {
+        if (input.trim().toLowerCase() === 'reset key') {
+          localStorage.removeItem('gemini_api_key');
+          alert("Gemini API Key has been cleanly removed.");
+        } else if (input.trim()) {
+          const newName = input.trim();
+          localStorage.setItem('issue_tracker_profile_name', newName);
+          this.updateAvatar(newName);
+        }
+      }
+    });
+  },
+
+  updateAvatar(name) {
+    if (this.btn) {
+      const encodedName = encodeURIComponent(name);
+      this.btn.src = `https://ui-avatars.com/api/?name=${encodedName}&background=6366f1&color=fff`;
+      this.btn.alt = name;
+    }
+  }
+};
+
 // --- STATE MANAGEMENT ---
 const State = {
   issues: [],
@@ -129,6 +247,33 @@ const UI = {
       column.addEventListener('dragleave', this.handleDragLeave.bind(this));
       column.addEventListener('drop', this.handleDrop.bind(this));
     });
+
+    // AI Generate Logic
+    this.aiGenerateBtn = document.getElementById('ai-generate-btn');
+    if (this.aiGenerateBtn) {
+      this.aiGenerateBtn.addEventListener('click', async () => {
+        const titleInput = document.getElementById('issue-title');
+        const descInput = document.getElementById('issue-desc');
+        
+        if (!titleInput.value.trim()) {
+          alert('Please enter a title first so the AI knows what to generate!');
+          titleInput.focus();
+          return;
+        }
+
+        this.aiGenerateBtn.disabled = true;
+        const originalText = this.aiGenerateBtn.textContent;
+        this.aiGenerateBtn.textContent = '⏳ Generating...';
+        
+        const generated = await AIManager.generateDescription(titleInput.value.trim());
+        if (generated) {
+          descInput.value = generated;
+        }
+        
+        this.aiGenerateBtn.disabled = false;
+        this.aiGenerateBtn.textContent = originalText;
+      });
+    }
   },
 
   openModal() {
@@ -281,6 +426,8 @@ const UI = {
 
 // --- BOOTSTRAP ---
 document.addEventListener('DOMContentLoaded', () => {
+  ThemeManager.init();
+  ProfileManager.init();
   State.init();
   UI.init();
 });

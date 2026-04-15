@@ -1,0 +1,12 @@
+{
+  "name": "ai-driven-issue-tracker",
+  "version": "1.0.0",
+  "description": "An AI-Driven Issue Tracker for hackathons",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.1.2"
+  }
+}
