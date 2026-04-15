@@ -239,6 +239,152 @@ a { color: var(--primary-color); text-decoration: none; }
 }
 
 /* ===================================================================
+   Layout & Sidebar
+   =================================================================== */
+.app-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 72px); /* Subtract header height */
+  position: relative;
+}
+
+.sidebar-toggle-btn {
+  position: absolute;
+  top: 1.25rem;
+  left: 58px; /* Offset to sit nicely on the edge of 72px nav */
+  width: 28px;
+  height: 28px;
+  background-color: var(--surface-solid);
+  border: 1px solid var(--header-border);
+  color: var(--text-muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-toggle-btn:hover {
+  background-color: var(--surface-hover);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.toggle-icon {
+  transition: transform var(--transition-smooth);
+}
+
+/* Collapsed State Logic */
+.app-layout.collapsed .side-nav {
+  width: 0;
+  border-right-color: transparent;
+  padding: 1.5rem 0;
+}
+
+.app-layout.collapsed .sidebar-toggle-btn {
+  left: 1.25rem;
+}
+
+.app-layout.collapsed .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.app-layout.collapsed .nav-links {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.side-nav {
+  width: 72px;
+  background-color: var(--surface-color);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--header-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0;
+  z-index: 5;
+  transition: width var(--transition-normal);
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  align-items: center;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  gap: 4px;
+}
+
+.nav-item svg {
+  transition: transform var(--transition-fast);
+}
+
+.nav-item .nav-label {
+  font-size: 0.6rem;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all var(--transition-fast);
+}
+
+.nav-item:hover {
+  background-color: var(--surface-hover);
+  color: var(--primary-color);
+}
+
+.nav-item:hover svg {
+  transform: translateY(-2px);
+}
+
+.nav-item:hover .nav-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.nav-item::after {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 4px;
+  height: 24px;
+  background-color: var(--primary-color);
+  border-radius: 0 4px 4px 0;
+  transition: transform var(--transition-fast);
+}
+
+.nav-item:hover::after {
+  transform: translateY(-50%) scaleY(1);
+}
+
+/* ===================================================================
    Board Canvas
    =================================================================== */
 .board-container {
@@ -596,6 +742,57 @@ a { color: var(--primary-color); text-decoration: none; }
 }
 
 @media (max-width: 768px) {
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
+  .app-layout {
+    flex-direction: column-reverse;
+    height: calc(100vh - 65px); /* Header height on mobile */
+  }
+
+  .side-nav {
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    padding: 0;
+    border-right: none;
+    border-top: 1px solid var(--header-border);
+    justify-content: center;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    height: 100%;
+    justify-content: space-around;
+    max-width: 400px;
+  }
+
+  .nav-item {
+    height: 100%;
+    width: 70px;
+  }
+
+  .nav-item .nav-label {
+    opacity: 1;
+    transform: translateY(0);
+    font-size: 0.55rem;
+  }
+  
+  .nav-item::after {
+    left: 50%;
+    top: auto;
+    bottom: -1px;
+    transform: translateX(-50%) scaleX(0);
+    width: 24px;
+    height: 3px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .nav-item:hover::after {
+    transform: translateX(-50%) scaleX(1);
+  }
+
   .app-header {
     padding: 0.75rem 1rem;
   }

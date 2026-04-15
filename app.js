@@ -96,22 +96,24 @@ const ProfileManager = {
     const savedName = localStorage.getItem('issue_tracker_profile_name') || 'Guest User';
     this.updateAvatar(savedName);
     
-    this.btn.addEventListener('click', () => {
-      const currentName = localStorage.getItem('issue_tracker_profile_name') || 'Guest User';
-      const promptText = "Settings:\n\n1. Enter your new Profile Name below.\n2. Or type 'reset key' to clear your Gemini API Key.";
-      const input = window.prompt(promptText, currentName);
-      
-      if (input !== null) {
-        if (input.trim().toLowerCase() === 'reset key') {
-          localStorage.removeItem('gemini_api_key');
-          alert("Gemini API Key has been cleanly removed.");
-        } else if (input.trim()) {
-          const newName = input.trim();
-          localStorage.setItem('issue_tracker_profile_name', newName);
-          this.updateAvatar(newName);
-        }
+    this.btn.addEventListener('click', () => this.openSettings());
+  },
+
+  openSettings() {
+    const currentName = localStorage.getItem('issue_tracker_profile_name') || 'Guest User';
+    const promptText = "Settings:\n\n1. Enter your new Profile Name below.\n2. Or type 'reset key' to clear your Gemini API Key.";
+    const input = window.prompt(promptText, currentName);
+    
+    if (input !== null) {
+      if (input.trim().toLowerCase() === 'reset key') {
+        localStorage.removeItem('gemini_api_key');
+        alert("Gemini API Key has been cleanly removed.");
+      } else if (input.trim()) {
+        const newName = input.trim();
+        localStorage.setItem('issue_tracker_profile_name', newName);
+        this.updateAvatar(newName);
       }
-    });
+    }
   },
 
   updateAvatar(name) {
@@ -426,10 +428,51 @@ const UI = {
   }
 };
 
+// --- NAVIGATION MANAGEMENT ---
+const NavigationManager = {
+  init() {
+    this.homeBtn = document.getElementById('nav-home-btn');
+    this.settingsBtn = document.getElementById('nav-settings-btn');
+    this.toggleBtn = document.getElementById('sidebar-toggle');
+    this.layout = document.getElementById('app-layout');
+    
+    if (this.homeBtn) {
+      this.homeBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        UI.render();
+      });
+    }
+    
+    if (this.settingsBtn) {
+      this.settingsBtn.addEventListener('click', () => {
+        ProfileManager.openSettings();
+      });
+    }
+
+    if (this.toggleBtn && this.layout) {
+      this.toggleBtn.addEventListener('click', () => this.toggleSidebar());
+      
+      // Load persisted state
+      const isCollapsed = localStorage.getItem('issue_tracker_sidebar_collapsed') === 'true';
+      if (isCollapsed) {
+        this.layout.classList.add('collapsed');
+      }
+    }
+  },
+
+  toggleSidebar() {
+    if (this.layout) {
+      const isCollapsed = this.layout.classList.toggle('collapsed');
+      localStorage.setItem('issue_tracker_sidebar_collapsed', isCollapsed);
+    }
+  }
+};
+
 // --- BOOTSTRAP ---
 document.addEventListener('DOMContentLoaded', () => {
   ThemeManager.init();
   ProfileManager.init();
+  NavigationManager.init();
   State.init();
   UI.init();
 });
