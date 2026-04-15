@@ -74,12 +74,14 @@ const ThemeManager = {
   applyTheme() {
     if (this.themeBase === 'light') {
       document.documentElement.classList.add('light-theme');
+      // In light mode, show moon icon (click to go dark)
       this.sunIcon.classList.add('hidden');
       this.moonIcon.classList.remove('hidden');
     } else {
       document.documentElement.classList.remove('light-theme');
-      this.sunIcon.classList.remove('hidden');
+      // In dark mode, show sun icon (click to go light)
       this.moonIcon.classList.add('hidden');
+      this.sunIcon.classList.remove('hidden');
     }
   }
 };
