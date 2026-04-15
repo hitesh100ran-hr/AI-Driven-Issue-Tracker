@@ -1,8 +1,10 @@
 :root {
   /* Color Palette - Premium Dark Theme */
   --bg-color: #0f172a;           /* Slate 900 */
-  --surface-color: #1e293b;      /* Slate 800 */
-  --surface-hover: #334155;      /* Slate 700 */
+  --body-bg: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --surface-color: rgba(30, 41, 59, 0.7);
+  --surface-solid: #1e293b;
+  --surface-hover: rgba(51, 65, 85, 0.8);
   --primary-color: #6366f1;      /* Indigo 500 */
   --primary-hover: #4f46e5;      /* Indigo 600 */
   --text-main: #f8fafc;          /* Slate 50 */
@@ -21,18 +23,25 @@
 
 :root.light-theme {
   --bg-color: #f8fafc;           /* Slate 50 */
-  --surface-color: #ffffff;      /* White */
-  --surface-hover: #f1f5f9;      /* Slate 100 */
+  --body-bg: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  --surface-color: rgba(255, 255, 255, 0.7);
+  --surface-solid: #ffffff;
+  --surface-hover: rgba(241, 245, 249, 0.8);
   --text-main: #0f172a;          /* Slate 900 */
   --text-muted: #64748b;         /* Slate 500 */
   --border-color: #e2e8f0;       /* Slate 200 */
 }
 
 :root.light-theme .column {
-  background-color: #f1f5f9;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
 }
 :root.light-theme .issue-id {
-  background: #e2e8f0;
+  background: rgba(0,0,0,0.05);
+}
+:root.light-theme .issue-card {
+  background-color: rgba(255, 255, 255, 0.9);
 }
 
 * {
@@ -43,7 +52,8 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--bg-color);
+  background: var(--body-bg);
+  background-attachment: fixed;
   color: var(--text-main);
   height: 100vh;
   display: flex;
@@ -116,10 +126,16 @@ a { color: var(--primary-color); text-decoration: none; }
 /* Header */
 .app-header {
   background-color: var(--surface-color);
-  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 1rem 1.5rem;
   box-shadow: var(--shadow-sm);
   z-index: 10;
+}
+
+:root.light-theme .app-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .header-container {
@@ -180,15 +196,18 @@ a { color: var(--primary-color); text-decoration: none; }
 
 /* Column */
 .column {
-  background-color: rgba(30, 41, 59, 0.5);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  background-color: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
   width: 320px;
   min-width: 320px;
   max-height: 100%;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .column.drag-over {
@@ -243,20 +262,20 @@ a { color: var(--primary-color); text-decoration: none; }
 
 /* Issue Card */
 .issue-card {
-  background-color: var(--surface-color);
+  background-color: var(--surface-solid);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   padding: 1rem;
   cursor: grab;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
 }
 
 .issue-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: #475569;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.3);
+  border-color: var(--primary-color);
 }
 
 .issue-card:hover .delete-btn {
@@ -334,7 +353,7 @@ a { color: var(--primary-color); text-decoration: none; }
 }
 
 .modal-content {
-  background-color: var(--surface-color);
+  background-color: var(--surface-solid);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   width: 100%;
